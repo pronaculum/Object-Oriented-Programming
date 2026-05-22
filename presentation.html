@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Java OOP Geometry Engine 발표 자료</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #0f172a;    /* Deep Navy */
+            --secondary-color: #1e293b;  /* Slate Dark */
+            --accent-color: #10b981;     /* Emerald Green */
+            --bg-light: #f8fafc;         /* Soft Off-White */
+            --text-main: #334155;        /* Charcoal Text */
+            --text-muted: #64748b;       /* Muted Grey */
+            --border-color: #e2e8f0;     /* Light Border */
+            --card-bg: #ffffff;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background-color: #cbd5e1;
+            color: var(--text-main);
+            line-height: 1.6;
+            padding: 40px 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 40px;
+        }
+
+        /* 슬라이드 공통 컨테이너 */
+        .slide {
+            width: 1280px;
+            height: 720px;
+            background-color: var(--card-bg);
+            padding: 60px 80px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+        }
+
+        /* 표지 슬라이드 스타일 */
+        .slide.title-slide {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: #ffffff;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .title-slide h1 {
+            font-size: 54px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            letter-spacing: -1.5px;
+            color: #ffffff;
+        }
+
+        .title-slide .subtitle {
+            font-size: 24px;
+            color: #94a3b8;
+            font-weight: 300;
+            margin-bottom: 40px;
+        }
+
+        .title-slide .divider {
+            width: 80px;
+            height: 4px;
+            background-color: var(--accent-color);
+            margin-bottom: 40px;
+        }
+
+        .title-slide .meta-info {
+            font-size: 16px;
+            color: #64748b;
+        }
+
+        /* 일반 슬라이드 헤더 */
+        .slide-header {
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        .slide-header h2 {
+            font-size: 36px;
+            font-weight: 700;
+            color: var(--primary-color);
+            letter-spacing: -1px;
+            padding-left: 20px;
+            border-left: 6px solid var(--accent-color);
+        }
+
+        .slide-header .slide-subtitle {
+            font-size: 16px;
+            color: var(--text-muted);
+            margin-top: 5px;
+            padding-left: 20px;
+        }
+
+        /* 슬라이드 본문 영역 */
+        .slide-body {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* 2컬럼 레이아웃 */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            height: 100%;
+        }
+
+        /* 테이블 디자인 */
+        .method-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        .method-table th {
+            background-color: var(--primary-color);
+            color: #ffffff;
+            padding: 16px 20px;
+            font-size: 16px;
+            font-weight: 500;
+            text-align: left;
+        }
+
+        .method-table td {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 15px;
+            vertical-align: top;
+        }
+
+        .method-table tr:nth-child(even) td {
+            background-color: var(--bg-light);
+        }
+
+        .method-name {
+            font-family: 'Fira Code', monospace;
+            font-weight: 500;
+            color: #0f172a;
+            background: #e2e8f0;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .return-type {
+            font-family: 'Fira Code', monospace;
+            color: #2563eb;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .param-list {
+            font-family: 'Fira Code', monospace;
+            color: #475569;
+            font-size: 13px;
+        }
+
+        /* 카드/타일 레이아웃 */
+        .card-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            margin-top: 10px;
+        }
+
+        .card {
+            background-color: var(--bg-light);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .card-icon {
+            font-size: 32px;
+            color: var(--primary-color);
+        }
+
+        .card h3 {
+            font-size: 20px;
+            color: var(--primary-color);
+            font-family: 'Fira Code', monospace;
+        }
+
+        .card p {
+            font-size: 15px;
+            color: var(--text-main);
+            line-height: 1.6;
+        }
+
+        /* 구조 도식화용 블록 */
+        .architecture-flow {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--bg-light);
+            padding: 40px;
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+            margin-top: 20px;
+        }
+
+        .flow-node {
+            background: #ffffff;
+            border: 2px solid var(--primary-color);
+            border-radius: 8px;
+            padding: 20px;
+            width: 220px;
+            text-align: center;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+
+        .flow-node h4 {
+            font-size: 18px;
+            color: var(--primary-color);
+            margin-bottom: 8px;
+        }
+
+        .flow-node p {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .flow-arrow {
+            font-size: 24px;
+            color: var(--accent-color);
+        }
+
+        /* 하단 페이지 번호 */
+        .slide-footer {
+            position: absolute;
+            bottom: 30px;
+            left: 80px;
+            right: 80px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid var(--border-color);
+            padding-top: 15px;
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        /* 간결한 리스트 스타일 */
+        .bullet-list {
+            list-style: none;
+            margin-top: 10px;
+        }
+
+        .bullet-list li {
+            position: relative;
+            padding-left: 25px;
+            margin-bottom: 16px;
+            font-size: 18px;
+        }
+
+        .bullet-list li::before {
+            content: "■";
+            position: absolute;
+            left: 0;
+            color: var(--accent-color);
+            font-size: 14px;
+            top: 2px;
+        }
+
+        /* 섹션 간지 스타일 */
+        .section-slide {
+            background-color: var(--primary-color);
+            color: #ffffff;
+            justify-content: center;
+            align-items: flex-start;
+            padding-left: 120px;
+        }
+
+        .section-slide h2 {
+            font-size: 48px;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 15px;
+        }
+
+        .section-slide p {
+            font-size: 20px;
+            color: #94a3b8;
+        }
+
+        .section-slide .accent-line {
+            width: 120px;
+            height: 5px;
+            background-color: var(--accent-color);
+            margin-bottom: 30px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Slide 1: Title -->
+    <div class="slide title-slide">
+        <h1>OOP 기하학적 분석 엔진 설계</h1>
+        <div class="subtitle">객체지향 원칙 기반 도형 관계 연산 프로젝트</div>
+        <div class="divider"></div>
+        <div class="meta-info">Java 객체지향 프로그래밍 프로젝트 발표 초안</div>
+    </div>
+
+    <!-- Slide 2: Architecture -->
+    <div class="slide">
+        <div class="slide-header">
+            <h2>전체 시스템 설계 구조 (Architecture)</h2>
+            <div class="slide-subtitle">각 패키지 및 컴포넌트의 역할 정의</div>
+        </div>
+        <div class="slide-body">
+            <p style="font-size: 16px; margin-bottom: 20px;">본 프로젝트는 데이터 캡슐화와 단일 책임 원칙(SRP)을 준수하여 기하학적 도형 정보와 연산 로직을 철저히 분리 설계하였습니다.</p>
+            <div class="architecture-flow">
+                <div class="flow-node">
+                    <h4>대상성 (Entities)</h4>
+                    <p>Shape, Point2D 등 기하학적 원형 데이터 정의</p>
+                </div>
+                <div class="flow-arrow"><i class="fa-solid fa-chevron-right"></i></div>
+                <div class="flow-node">
+                    <h4>관계 (Relation)</h4>
+                    <p>도형 간 기하학적 상태 판별 및 보정 핵심 로직</p>
+                </div>
+                <div class="flow-arrow"><i class="fa-solid fa-chevron-right"></i></div>
+                <div class="flow-node">
+                    <h4>정보 (Information)</h4>
+                    <p>연산 결과를 담아 전달하는 DTO 패키지</p>
+                </div>
+                <div class="flow-arrow"><i class="fa-solid fa-chevron-right"></i></div>
+                <div class="flow-node">
+                    <h4>기능 (Function)</h4>
+                    <p>GeoManager를 통한 전체 프로세스 제어 및 UI 연동</p>
+                </div>
+            </div>
+        </div>
+        <div class="slide-footer">
+            <span>Java OOP Geometry Engine Project</span>
+            <span>02</span>
+        </div>
+    </div>
+
+    <!-- Slide 3: Section Divider -->
+    <div class="slide section-slide">
+        <div class="accent-line"></div>
+        <h2>01. 조회 및 나열 메서드</h2>
+        <p>도형 데이터 변경 없이 상태와 기하학적 지표를 계산하는 API</p>
+    </div>
+
+    <!-- Slide 4: Inquiry Methods -->
+    <div class="slide">
+        <div class="slide-header">
+            <h2>기하학적 관계 조회 및 연산 API</h2>
+            <div class="slide-subtitle">도형 간의 현재 상태를 실시간으로 분석하여 반환하는 메서드 구성</div>
+        </div>
+        <div class="slide-body">
+            <table class="method-table">
+                <thead>
+                    <tr>
+                        <th style="width: 25%;">메서드명 (Method)</th>
+                        <th style="width: 15%;">반환 타입</th>
+                        <th style="width: 25%;">매개변수 (Parameters)</th>
+                        <th style="width: 35%;">설명 (Description)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="method-name">getSpatialRelation</span></td>
+                        <td><span class="return-type">SpatialRelation</span></td>
+                        <td><span class="param-list">(Shape o1, Shape o2)</span></td>
+                        <td>두 객체 간의 현재 기하학적 관계(각도/만남/평행/일치)를 판단하여 반환합니다.</td>
+                    </tr>
+                    <tr>
+                        <td><span class="method-name">calculateAngle</span></td>
+                        <td><span class="return-type">double</span></td>
+                        <td><span class="param-list">(Shape o1, Shape o2)</span></td>
+                        <td>두 객체 사이의 사잇각 크기를 계산하여 반환합니다. (각도 관계 분석용)</td>
+                    </tr>
+                    <tr>
+                        <td><span class="method-name">getIntersection</span></td>
+                        <td><span class="return-type">Point2D</span></td>
+                        <td><span class="param-list">(Shape o1, Shape o2)</span></td>
+                        <td>두 객체가 만나는 교점의 좌표를 정확히 계산하여 반환합니다. (만남 관계용)</td>
+                    </tr>
+                    <tr>
+                        <td><span class="method-name">hasRelation</span></td>
+                        <td><span class="return-type">boolean</span></td>
+                        <td><span class="param-list">(Shape o1, Shape o2, Relation type)</span></td>
+                        <td>두 객체가 지정한 특정 기하학적 조건이나 관계를 만족하는지 여부를 검증합니다.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="slide-footer">
+            <span>Java OOP Geometry Engine Project</span>
+            <span>04</span>
+        </div>
+    </div>
+
+    <!-- Slide 5: Section Divider -->
+    <div class="slide section-slide" style="background-color: #1e293b;">
+        <div class="accent-line" style="background-color: #3b82f6;"></div>
+        <h2>02. 수정 및 변경 메서드</h2>
+        <p>도형의 속성을 제어하여 의도적인 기하학적 관계로 강제 정렬하는 API</p>
+    </div>
+
+    <!-- Slide 6: Modification Methods -->
+    <div class="slide">
+        <div class="slide-header">
+            <h2>도형 상태 수정 및 정렬 API</h2>
+            <div class="slide-subtitle">도형 객체의 좌표나 기울기를 실시간으로 조정하여 대상을 동적으로 제어</div>
+        </div>
+        <div class="slide-body">
+            <div class="card-container">
+                <div class="card">
+                    <div class="card-icon"><i class="fa-solid fa-sliders"></i></div>
+                    <h3>modifyRelation</h3>
+                    <p style="font-size: 13px; color: var(--text-muted); font-family: monospace;">boolean (Shape o1, Shape o2, Relation target)</p>
+                    <p>두 객체의 상대적 위치나 각도를 계산하고 조절하여, 사용자가 목표로 하는 타겟 관계(Relation) 상태로 강제 변경합니다.</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon"><i class="fa-solid fa-grip-lines"></i></div>
+                    <h3>alignParallel</h3>
+                    <p style="font-size: 13px; color: var(--text-muted); font-family: monospace;">void (Shape o1, Shape o2)</p>
+                    <p>두 객체의 기울기(Slope) 벡터를 동일하게 맞춰 평행 상태가 되도록 한쪽 혹은 양쪽 도형의 방향 데이터를 수정합니다.</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon"><i class="fa-solid fa-clone"></i></div>
+                    <h3>alignCoincidence</h3>
+                    <p style="font-size: 13px; color: var(--text-muted); font-family: monospace;">void (Shape o1, Shape o2)</p>
+                    <p>두 객체의 기준 좌표값과 방향 벡터를 완벽하게 동일 선상으로 일치시켜 일치(Coincidence) 상태로 수정 보정합니다.</p>
+                </div>
+            </div>
+        </div>
+        <div class="slide-footer">
+            <span>Java OOP Geometry Engine Project</span>
+            <span>06</span>
+        </div>
+    </div>
+
+    <!-- Slide 7: Design Patterns & Takeaways -->
+    <div class="slide">
+        <div class="slide-header">
+            <h2>객체지향 설계의 핵심 성과 (SOLID)</h2>
+            <div class="slide-subtitle">본 설계 초안이 갖는 구조적 특장점</div>
+        </div>
+        <div class="slide-body">
+            <div class="grid-2">
+                <div>
+                    <ul class="bullet-list">
+                        <li><strong>다형성(Polymorphism) 극대화</strong><br><span style="font-size:15px; color:var(--text-muted);">모든 메서드가 상위 추상 클래스나 인터페이스인 <code>Shape</code> 타입을 파라미터로 받아, 향후 원(Circle), 삼각형(Triangle) 등이 추가되어도 메서드 시그니처를 유지할 수 있습니다.</span></li>
+                        <li><strong>확장성 중심 설계 (OCP)</strong><br><span style="font-size:15px; color:var(--text-muted);">새로운 기하학적 관계 알고리즘이 필요할 때 기존 코드를 수정하는 대신 <code>Relation</code> 인터페이스 전략 패턴 형태로 확장이 가능합니다.</span></li>
+                    </ul>
+                </div>
+                <div>
+                    <ul class="bullet-list">
+                        <li><strong>명확한 책임 분리 (Separation of Concerns)</strong><br><span style="font-size:15px; color:var(--text-muted);">도형 데이터 자체를 담는 Entity 패키지와 연산을 제어하는 Function 패키지가 명확히 구분되어 협업 및 단위 테스트(Unit Test) 생산성이 높습니다.</span></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="slide-footer">
+            <span>Java OOP Geometry Engine Project</span>
+            <span>07</span>
+        </div>
+    </div>
+
+    <!-- Slide 8: Q&A End -->
+    <div class="slide title-slide" style="background: linear-gradient(135deg, #0f172a 0%, #020617 100%);">
+        <h1>Q & A</h1>
+        <div class="subtitle" style="color: var(--accent-color);">감사합니다. 질의응답을 진행하겠습니다.</div>
+    </div>
+
+</body>
+</html>
